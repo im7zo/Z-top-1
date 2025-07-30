@@ -66,7 +66,11 @@ from telethon import events
 import random
 from telethon import events
 
+from telethon import events
 
+@client.on(events.NewMessage(pattern=r"\.تجربة التحديث"))
+async def commands_menu(event):
+    await event.respond("✅ تم تجربة التحديث بنجاح!", link_preview=False)
 
 from telethon import events
 from telethon.tl.types import Channel, Chat, User, PeerUser
