@@ -70,7 +70,7 @@ import requests
 import json
 import sys
 from telethon import events
-
+print("تم تشغيل السورس الجديد بنجاح!")
 OWNER_FILE = "owner.json"
 SOURCE_URL = "https://raw.githubusercontent.com/im7zo/Z-top-1/main/Zvv.py"
 LOCAL_FILE = "Zm.py"
