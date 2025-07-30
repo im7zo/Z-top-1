@@ -65,7 +65,51 @@ import random
 from telethon import events
 import random
 from telethon import events
+import os
+import requests
+import json
+import sys
+from telethon import events
 
+OWNER_FILE = "owner.json"
+SOURCE_URL = "https://raw.githubusercontent.com/im7zo/Z-top-1/main/Zvv.py"
+LOCAL_FILE = "Zm.py"
+
+# تخزين المالك عند أول استخدام
+def get_owner_id(event):
+    if os.path.exists(OWNER_FILE):
+        with open(OWNER_FILE, "r") as f:
+            return json.load(f)["owner_id"]
+    else:
+        owner_id = event.sender_id
+        with open(OWNER_FILE, "w") as f:
+            json.dump({"owner_id": owner_id}, f)
+        return owner_id
+
+@client.on(events.NewMessage(pattern=r"^\.تحديث$"))
+async def update_code(event):
+    sender = await event.get_sender()
+    sender_id = sender.id
+    owner_id = get_owner_id(event)
+
+    if sender_id != owner_id:
+        await event.reply("❌ هذا الأمر خاص بالمطوّر فقط.")
+        return
+
+    try:
+        await event.reply("⏳ جارِ تحديث السورس...")
+        response = requests.get(SOURCE_URL)
+
+        if response.status_code == 200:
+            with open(LOCAL_FILE, "wb") as f:
+                f.write(response.content)
+
+            await event.respond("✅ تم تحديث السورس بنجاح.\n🔁 سيتم إعادة التشغيل تلقائيًا.")
+            os.execv(sys.executable, ['python'] + sys.argv)
+        else:
+            await event.respond("❌ فشل تحميل التحديث من GitHub.")
+    except Exception as e:
+        await event.respond(f"❌ حدث خطأ أثناء التحديث:\n{e}")
 from telethon import events
 
 @client.on(events.NewMessage(pattern=r"^\.تحديث$"))
